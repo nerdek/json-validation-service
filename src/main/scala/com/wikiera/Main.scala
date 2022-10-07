@@ -13,7 +13,7 @@ import sttp.tapir.server.http4s.Http4sServerInterpreter
 import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 
-object HelloWorldHttp4sServer extends IOApp with Logger {
+object Main extends IOApp with Logger {
   // the endpoint: single fixed path input ("hello"), single query parameter
   // corresponds to: GET /hello?name=...
   val helloWorld: PublicEndpoint[String, Unit, String, Any] =

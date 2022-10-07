@@ -3,12 +3,14 @@ name := "json-validation-service"
 version := "0.1"
 
 scalaVersion := "2.13.9"
+resolvers += "jitpack".at("https://jitpack.io")
 
 libraryDependencies += "co.fs2" %% "fs2-core" % "3.3.0"
 libraryDependencies += "co.fs2" %% "fs2-io" % "3.3.0"
 libraryDependencies += "org.typelevel" %% "cats-core" % "2.8.0"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "3.3.14"
 libraryDependencies += "io.circe" %% "circe-fs2" % "0.14.0"
+libraryDependencies += "io.circe" %% "circe-json-schema" % "0.2.0"
 
 val circeVersion = "0.14.1"
 
@@ -36,6 +38,8 @@ libraryDependencies ++= logging
 
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-core" % "1.1.2"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % "1.1.2"
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % "1.1.2"
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % "1.1.2"
 libraryDependencies += "org.http4s" %% "http4s-blaze-server" % "0.23.12"
 
 libraryDependencies += "com.github.pureconfig" %% "pureconfig" % "0.17.1"
