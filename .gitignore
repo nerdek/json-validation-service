@@ -1,0 +1,13 @@
+target/
+.idea/
+**/.DS_Store
+project/boot/
+project/plugins/project/
+project/project/
+*.log
+logs/
+*.sc
+*.iml
+.bloop
+.metals
+.bsp
