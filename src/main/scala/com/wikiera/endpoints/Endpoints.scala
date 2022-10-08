@@ -12,26 +12,28 @@ import sttp.tapir.{EndpointInput, PublicEndpoint, endpoint, path}
 
 object Endpoints {
 
-  private val schemaInput: EndpointInput[SchemaInput] =
+  private val idAndBodyInput: EndpointInput[SchemaInput] =
     path[SchemaId]("schemaId")
       .and(jsonBody[Json].description("input Json body which is Json schema or Json to be validated"))
       .mapTo[SchemaInput]
 
-  private def baseEndpoint(path: String) = endpoint
+  private val idInput = path[SchemaId]("schemaId")
+
+  private def baseEndpoint[T](path: String)(input: EndpointInput[T]) = endpoint
     .in(path)
-    .in(schemaInput)
+    .in(input)
     .errorOut(jsonBody[ErrorResponse])
 
   val addSchema: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
-    baseEndpoint("schema").post
+    baseEndpoint("schema")(idAndBodyInput).post
       .out(jsonBody[SuccessResponse])
 
-  val getSchema: PublicEndpoint[SchemaInput, ErrorResponse, Json, Any] =
-    baseEndpoint("schema").get
+  val getSchema: PublicEndpoint[SchemaId, ErrorResponse, Json, Any] =
+    baseEndpoint("schema")(idInput).get
       .out(jsonBody[Json])
 
   val validateJson: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
-    baseEndpoint("validate").post
+    baseEndpoint("validate")(idAndBodyInput).post
       .out(jsonBody[SuccessResponse])
 
   val swagger: List[ServerEndpoint[Fs2Streams[IO], IO]] =
