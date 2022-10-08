@@ -8,13 +8,13 @@ import sttp.tapir.generic.auto._
 import sttp.tapir.json.circe._
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
-import sttp.tapir.{EndpointInput, PublicEndpoint, endpoint, path}
+import sttp.tapir.{EndpointInput, PublicEndpoint, endpoint, path, stringBody}
 
 object Endpoints {
 
   private val idAndBodyInput: EndpointInput[SchemaInput] =
     path[SchemaId]("schemaId")
-      .and(jsonBody[Json].description("input Json body which is Json schema or Json to be validated"))
+      .and(stringBody.description("input Json body which is Json schema or Json to be validated"))
       .mapTo[SchemaInput]
 
   private val idInput = path[SchemaId]("schemaId")
@@ -42,6 +42,6 @@ object Endpoints {
 }
 
 case class SchemaId(id: String) extends AnyVal
-case class SchemaInput(id: SchemaId, body: Json)
+case class SchemaInput(id: SchemaId, body: String)
 case class SuccessResponse(action: String, id: String, status: String)
 case class ErrorResponse(action: String, id: String, status: String, message: String)

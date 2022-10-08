@@ -19,8 +19,13 @@ object Routes extends Logging {
 
   val addSchemaLogic = Endpoints.addSchema.serverLogic[IO] { input =>
     IO {
-      schemas += (input.id.id -> input.body)
-      Right(SuccessResponse("uploadSchema", input.id.id, "success"))
+      val parseRes = parse(input.body)
+      parseRes match {
+        case Left(_) => Left(ErrorResponse("uploadSchema", input.id.id, "error", "Invalid JSON"))
+        case Right(value) =>
+          schemas += (input.id.id -> value)
+          Right(SuccessResponse("uploadSchema", input.id.id, "success"))
+      }
     }
   }
 }
