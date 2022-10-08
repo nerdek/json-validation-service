@@ -19,7 +19,7 @@ object Main extends IOApp with Logging {
 
   private val server: Http4sServerInterpreter[IO] = Http4sServerInterpreter[IO]()
 
-  val serviceRoutes: HttpRoutes[IO] = server.toRoutes(List(addSchemaLogic, getSchemaLogic))
+  val serviceRoutes: HttpRoutes[IO] = server.toRoutes(List(addSchemaLogic, getSchemaLogic, validateSchemaLogic))
   val swaggerRoute: HttpRoutes[IO] = server.toRoutes(swagger)
 
   override def run(args: List[String]): IO[ExitCode] = {
