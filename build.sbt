@@ -34,12 +34,17 @@ val logging = Seq(
   "ch.qos.logback" % "logback-classic" % "1.4.3" % Runtime
 )
 
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.14"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
+libraryDependencies += "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats" % "3.8.2"
+
 libraryDependencies ++= logging
 
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-core" % "1.1.2"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % "1.1.2"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % "1.1.2"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % "1.1.2"
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server" % "1.1.2"
 libraryDependencies += "org.http4s" %% "http4s-blaze-server" % "0.23.12"
 
 libraryDependencies += "com.github.pureconfig" %% "pureconfig" % "0.17.1"
