@@ -45,7 +45,6 @@ libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"      
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % "1.1.2"
 libraryDependencies += "org.http4s"                  %% "http4s-blaze-server"     % "0.23.12"
 libraryDependencies += "org.http4s"                  %% "http4s-circe"            % "0.23.16"
-//libraryDependencies += "org.http4s"                  %% "http4s-dsl"              % "0.23.16"
 
 libraryDependencies += "org.typelevel" %% "cats-effect-testing-scalatest" % "1.4.0" % Test
 
