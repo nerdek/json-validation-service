@@ -67,7 +67,7 @@ object Outputs {
 }
 
 object Actions {
-  val ValidateSchema = "validateSchema"
+  val Validate       = "validateSchema"
   val UploadSchema   = "uploadSchema"
   val DownloadSchema = "downloadSchema"
 }

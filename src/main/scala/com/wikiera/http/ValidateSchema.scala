@@ -17,10 +17,10 @@ object ValidateSchema {
       validateSchemaEndpoint.serverLogic[IO] { input =>
         val id = input.id
         parse(input.body) match {
-          case Left(_) => IO(Left(invalidJson(Actions.ValidateSchema, id.id)))
+          case Left(_) => IO(Left(invalidJson(Actions.Validate, id.id)))
           case Right(json) =>
             getSchema(id).flatMap {
-              case None         => IO(Left(schemaNotFound(Actions.ValidateSchema, id.id)))
+              case None         => IO(Left(schemaNotFound(Actions.Validate, id.id)))
               case Some(schema) => IO(validate(json, schema, id))
             }
         }
@@ -34,11 +34,11 @@ object ValidateSchema {
       .bimap(
         nel =>
           ErrorResponse(
-            Actions.ValidateSchema,
+            Actions.Validate,
             id.id,
             message = nel.toList.map(_.getMessage).mkString(" , ")
           ),
-        _ => SuccessResponse(Actions.ValidateSchema, id.id)
+        _ => SuccessResponse(Actions.Validate, id.id)
       )
       .toEither
 }
