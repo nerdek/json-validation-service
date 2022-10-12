@@ -2,7 +2,7 @@ package com.wikiera.http
 
 import cats.effect.IO
 import com.wikiera.http.Actions.{DownloadSchema, UploadSchema, ValidateSchema}
-import com.wikiera.http.Endpoints.{addSchema, getSchema, swagger, validateJson}
+import com.wikiera.http.Endpoints.{addSchemaEndpoint, getSchemaEndpoint, swagger, validateSchemaEndpoint}
 import com.wikiera.http.Outputs.ErrorResponse._
 import com.wikiera.http.Outputs.{ErrorResponse, SuccessResponse}
 import com.wikiera.log.Logging
@@ -24,7 +24,7 @@ class Routes(server: Http4sServerInterpreter[IO]) extends Logging {
   private lazy val swaggerRoute: HttpRoutes[IO] = server.toRoutes(swagger)
 
   private val getSchemaLogic =
-    getSchema.serverLogic[IO] { input =>
+    getSchemaEndpoint.serverLogic[IO] { input =>
       IO {
         schemas.get(input.id) match {
           case Some(value) => Right(value)
@@ -33,7 +33,7 @@ class Routes(server: Http4sServerInterpreter[IO]) extends Logging {
       }
     }
 
-  private val addSchemaLogic = addSchema.serverLogic[IO] { input =>
+  private val addSchemaLogic = addSchemaEndpoint.serverLogic[IO] { input =>
     IO {
       parse(input.body) match {
         case Left(_) => Left(invalidJson(UploadSchema, input.id.id))
@@ -44,7 +44,7 @@ class Routes(server: Http4sServerInterpreter[IO]) extends Logging {
     }
   }
 
-  private val validateSchemaLogic = validateJson.serverLogic[IO] { input =>
+  private val validateSchemaLogic = validateSchemaEndpoint.serverLogic[IO] { input =>
     IO {
       val id = input.id.id
       parse(input.body) match {

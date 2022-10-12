@@ -27,22 +27,26 @@ object Endpoints {
     .in(input)
     .errorOut(jsonBody[ErrorResponse])
 
-  lazy val addSchema: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
+  lazy val addSchemaEndpoint: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
     baseEndpoint("schema")(idAndBodyInput).post
       .out(statusCode(StatusCode.Created))
       .out(jsonBody[SuccessResponse])
 
-  lazy val getSchema: PublicEndpoint[SchemaId, ErrorResponse, Json, Any] =
+  lazy val getSchemaEndpoint: PublicEndpoint[SchemaId, ErrorResponse, Json, Any] =
     baseEndpoint("schema")(idInput).get
       .out(jsonBody[Json])
 
-  lazy val validateJson: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
+  lazy val validateSchemaEndpoint: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
     baseEndpoint("validate")(idAndBodyInput).post
       .out(jsonBody[SuccessResponse])
 
   lazy val swagger: List[ServerEndpoint[Fs2Streams[IO], IO]] =
     SwaggerInterpreter()
-      .fromEndpoints[IO](List(getSchema, addSchema, validateJson), "json-validation-service", "1.0.0")
+      .fromEndpoints[IO](
+        List(getSchemaEndpoint, addSchemaEndpoint, validateSchemaEndpoint),
+        "json-validation-service",
+        "1.0.0"
+      )
 }
 
 object Inputs {
