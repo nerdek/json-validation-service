@@ -1,8 +1,8 @@
-package com.wikiera.endpoints
+package com.wikiera.http
 
 import cats.effect.IO
-import com.wikiera.endpoints.Inputs._
-import com.wikiera.endpoints.Outputs._
+import com.wikiera.http.Inputs._
+import com.wikiera.http.Outputs._
 import io.circe.Json
 import io.circe.generic.auto._
 import sttp.capabilities.fs2.Fs2Streams
@@ -11,7 +11,7 @@ import sttp.tapir.generic.auto._
 import sttp.tapir.json.circe._
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
-import sttp.tapir.{EndpointInput, PublicEndpoint, endpoint, path, statusCode, stringBody}
+import sttp.tapir.{endpoint, path, statusCode, stringBody, EndpointInput, PublicEndpoint}
 
 object Endpoints {
 
@@ -27,23 +27,24 @@ object Endpoints {
     .in(input)
     .errorOut(jsonBody[ErrorResponse])
 
-  val addSchema: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
+  lazy val addSchema: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
     baseEndpoint("schema")(idAndBodyInput).post
       .out(statusCode(StatusCode.Created))
       .out(jsonBody[SuccessResponse])
 
-  val getSchema: PublicEndpoint[SchemaId, ErrorResponse, Json, Any] =
+  lazy val getSchema: PublicEndpoint[SchemaId, ErrorResponse, Json, Any] =
     baseEndpoint("schema")(idInput).get
       .out(jsonBody[Json])
 
-  val validateJson: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
+  lazy val validateJson: PublicEndpoint[SchemaInput, ErrorResponse, SuccessResponse, Any] =
     baseEndpoint("validate")(idAndBodyInput).post
       .out(jsonBody[SuccessResponse])
 
-  val swagger: List[ServerEndpoint[Fs2Streams[IO], IO]] =
+  lazy val swagger: List[ServerEndpoint[Fs2Streams[IO], IO]] =
     SwaggerInterpreter()
       .fromEndpoints[IO](List(getSchema, addSchema, validateJson), "json-validation-service", "1.0.0")
 }
+
 object Inputs {
   case class SchemaId(id: String) extends AnyVal
   case class SchemaInput(id: SchemaId, body: String)
@@ -63,6 +64,6 @@ object Outputs {
 
 object Actions {
   val ValidateSchema = "validateSchema"
-  val UploadSchema = "uploadSchema"
+  val UploadSchema   = "uploadSchema"
   val DownloadSchema = "downloadSchema"
 }
