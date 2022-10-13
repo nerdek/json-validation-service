@@ -17,14 +17,14 @@ import scala.util.control.NonFatal
 object Main extends IOApp with Logging {
 
   private val server: Http4sServerInterpreter[IO] = Http4sServerInterpreter[IO]()
-  private val Manual                              = "manual"
+  private val InMemory                            = "in_memory"
   override def run(args: List[String]): IO[ExitCode] =
     (for {
       _      <- eval(IO(logger.info("Starting json-validation-service")))
       config <- eval(ConfigSource.default.loadF[IO, AppConfig]())
       _      <- eval(IO(args.map(a => logger.info(a))))
       repository =
-        if (args.headOption.contains(Manual)) new InMemoryJsonSchemeRepository()
+        if (args.headOption.contains(InMemory)) new InMemoryJsonSchemeRepository()
         else new PostgresJsonSchemaRepository(config.postgres)
       routes = new Routes(server)(repository)
       _ <- BlazeServerBuilder[IO]
