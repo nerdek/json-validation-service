@@ -18,11 +18,12 @@ class AddSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers with Op
 
   private val server: Http4sServerInterpreter[IO] = Http4sServerInterpreter[IO]()
 
+  val nonExistingSchema: SchemaId => IO[None.type] = _ => IO.pure(None)
   "POST schema/{schemaId}" should {
     "add schema when it's proper JSON" in {
-      val request = Request[IO](method = POST, uri = uri"/schema/new_id").withEntity(properSchema)
 
-      val addSchemaRoute = AddSchema(server)(input =>
+      val request = Request[IO](method = POST, uri = uri"/schema/new_id").withEntity(properSchema)
+      val addSchemaRoute = AddSchema(server)(nonExistingSchema)(input =>
         IO.pure {
           input.id shouldBe SchemaId("new_id")
           input.body shouldBe properSchema
@@ -40,8 +41,9 @@ class AddSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers with Op
       val request        = Request[IO](method = POST, uri = uri"/schema/non_existing_id").withEntity(improperSchema)
       val invalidSchema = ErrorResponse
         .invalidJson(Actions.UploadSchema, nonExistingId)
+        ._2
 
-      val addSchemaRoute = AddSchema(server)(input =>
+      val addSchemaRoute = AddSchema(server)(nonExistingSchema)(input =>
         IO.pure {
           input.id shouldBe SchemaId(nonExistingId)
           input.body shouldBe improperSchema
@@ -52,6 +54,21 @@ class AddSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers with Op
         response.value.status.code shouldBe 400
         response.value.json.map(
           _.as[ErrorResponse].toOption.value shouldBe invalidSchema
+        )
+      }
+    }
+    "return 409 when schema already exists" in {
+      val request = Request[IO](method = POST, uri = uri"/schema/non_existing_id").withEntity(properSchema)
+      val schemaAlreadyExists = ErrorResponse
+        .schemaAlreadyExists(nonExistingId)
+        ._2
+
+      val addSchemaRoute = AddSchema(server)(_ => IO.pure(Some(existingSchema)))(_ => IO().void)
+
+      addSchemaRoute.run(request).value.flatMap { response =>
+        response.value.status.code shouldBe 409
+        response.value.json.map(
+          _.as[ErrorResponse].toOption.value shouldBe schemaAlreadyExists
         )
       }
     }

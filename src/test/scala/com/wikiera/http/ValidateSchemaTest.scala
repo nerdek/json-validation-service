@@ -35,9 +35,9 @@ class ValidateSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers wi
           .map(_.as[SuccessResponse].toOption.value shouldBe SuccessResponse(Actions.Validate, "existing_id"))
       }
     }
-    "return 400 when schema is not found" in {
+    "return 404 when schema is not found" in {
       val request        = Request[IO](method = POST, uri = uri"/validate/non_existing_id").withEntity(properJson)
-      val schemaNotFound = ErrorResponse.schemaNotFound(Actions.Validate, nonExistingId)
+      val schemaNotFound = ErrorResponse.schemaNotFound(Actions.Validate, nonExistingId)._2
 
       val validateSchemaRoute = ValidateSchema(server)(id =>
         IO.pure {
@@ -47,7 +47,7 @@ class ValidateSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers wi
       )
 
       validateSchemaRoute.run(request).value.flatMap { response =>
-        response.value.status.code shouldBe 400
+        response.value.status.code shouldBe 404
         response.value.json.map(
           _.as[ErrorResponse].toOption.value shouldBe schemaNotFound
         )
@@ -55,7 +55,7 @@ class ValidateSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers wi
     }
     "return 400 when sent JSON is not correct" in {
       val request     = Request[IO](method = POST, uri = uri"/validate/existing_id").withEntity("bad_json")
-      val invalidJson = ErrorResponse.invalidJson(Actions.Validate, existingId)
+      val invalidJson = ErrorResponse.invalidJson(Actions.Validate, existingId)._2
 
       val validateSchemaRoute = ValidateSchema(server)(id =>
         IO.pure {

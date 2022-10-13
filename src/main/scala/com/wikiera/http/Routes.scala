@@ -14,8 +14,10 @@ class Routes(server: Http4sServerInterpreter[IO]) extends Logging {
 
   def combinedRoutes: HttpRoutes[IO] = publicRoutes <+> swaggerRoute
 
-  val get      = GetSchema(server)(id => IO(schemas.get(id.id)))
-  val add      = AddSchema(server)(input => IO(schemas += (input.id.id -> parse(input.body).toOption.get)))
+  val get = GetSchema(server)(id => IO(schemas.get(id.id)))
+  val add = AddSchema(server)(id => IO(schemas.get(id.id)))(input =>
+    IO(schemas += (input.id.id -> parse(input.body).toOption.get))
+  )
   val validate = ValidateSchema(server)(id => IO(schemas.get(id.id)))
 
   private lazy val publicRoutes: HttpRoutes[IO] = get <+> add <+> validate

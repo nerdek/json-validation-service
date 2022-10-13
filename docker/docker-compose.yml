@@ -1,17 +1,24 @@
 version: '3.3'
 
 services:
-  db:
+  postgres_db:
     image: postgres
     restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     ports:
       - '5432:5432'
     volumes:
-      - db:/var/lib/postgresql/data
-
+      - postgres_db:/var/lib/postgresql/data
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://postgres_db:5432/postgres -user=postgres -password=postgres -connectRetries=60 migrate
+    volumes:
+      - ./../migration:/flyway/sql
+    depends_on:
+      - postgres_db
   adminer:
     image: adminer
     restart: always
@@ -19,5 +26,5 @@ services:
       - "8080:8080"
 
 volumes:
-  db:
+  postgres_db:
     driver: local

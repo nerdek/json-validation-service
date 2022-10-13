@@ -1,10 +1,10 @@
 package com.wikiera.http
 
 import cats.effect.IO
-import com.wikiera.http.Actions.{DownloadSchema, UploadSchema}
-import com.wikiera.http.Endpoints.{addSchemaEndpoint, getSchemaEndpoint}
+import com.wikiera.http.Actions.UploadSchema
+import com.wikiera.http.Endpoints.addSchemaEndpoint
 import com.wikiera.http.Inputs.{SchemaId, SchemaInput}
-import com.wikiera.http.Outputs.ErrorResponse.{invalidJson, schemaNotFound}
+import com.wikiera.http.Outputs.ErrorResponse.{invalidJson, schemaAlreadyExists}
 import com.wikiera.http.Outputs.SuccessResponse
 import io.circe.Json
 import io.circe.parser.parse
@@ -12,14 +12,20 @@ import org.http4s.HttpRoutes
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 object AddSchema {
-  def apply(server: Http4sServerInterpreter[IO])(addSchema: SchemaInput => IO[Unit]): HttpRoutes[IO] =
+  def apply(
+      server: Http4sServerInterpreter[IO]
+  )(getSchema: SchemaId => IO[Option[Json]])(addSchema: SchemaInput => IO[Unit]): HttpRoutes[IO] =
     server.toRoutes {
       addSchemaEndpoint.serverLogic[IO] { input =>
         parse(input.body) match {
           case Left(_) => IO(Left(invalidJson(UploadSchema, input.id.id)))
           case Right(_) =>
-            addSchema(input) >>
-              IO(Right(SuccessResponse(UploadSchema, input.id.id)))
+            getSchema(input.id).flatMap {
+              case Some(_) => IO(Left(schemaAlreadyExists(input.id.id)))
+              case None =>
+                addSchema(input) >>
+                  IO(Right(SuccessResponse(UploadSchema, input.id.id)))
+            }
         }
       }
     }

@@ -34,10 +34,11 @@ class GetSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers with Op
         response.value.json.map(_ shouldBe existingSchema)
       }
     }
-    "return 400 when schema is not found" in {
+    "return 404 when schema is not found" in {
       val request = Request[IO](method = GET, uri = uri"/schema/non_existing_id")
       val schemaNotFound = ErrorResponse
         .schemaNotFound(Actions.DownloadSchema, nonExistingId)
+        ._2
 
       val getSchemaRoute = GetSchema(server)(id =>
         IO.pure {
@@ -47,7 +48,7 @@ class GetSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers with Op
       )
 
       getSchemaRoute.run(request).value.flatMap { response =>
-        response.value.status.code shouldBe 400
+        response.value.status.code shouldBe 404
         response.value.json.map(
           _.as[ErrorResponse].toOption.value shouldBe schemaNotFound
         )
