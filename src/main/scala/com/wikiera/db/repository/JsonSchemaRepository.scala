@@ -2,10 +2,10 @@ package com.wikiera.db.repository
 
 import cats.effect.IO
 import com.wikiera.db.{PostgresConfig, PostgresTransactor}
-import com.wikiera.http.Inputs.{JsonSchema, SchemaId, SchemaInput}
-import io.circe.Json
+import com.wikiera.http.Inputs.{JsonSchema, SchemaId}
 import doobie.implicits._
 import doobie.postgres.circe.json.implicits._
+import io.circe.Json
 
 trait JsonSchemaRepository {
   def getSchema(schemaId: SchemaId): IO[Option[Json]]

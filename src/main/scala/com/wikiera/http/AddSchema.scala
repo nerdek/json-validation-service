@@ -3,7 +3,7 @@ package com.wikiera.http
 import cats.effect.IO
 import com.wikiera.http.Actions.UploadSchema
 import com.wikiera.http.Endpoints.addSchemaEndpoint
-import com.wikiera.http.Inputs.{JsonSchema, SchemaId, SchemaInput}
+import com.wikiera.http.Inputs.{JsonSchema, SchemaId}
 import com.wikiera.http.Outputs.ErrorResponse.{invalidJson, schemaAlreadyExists}
 import com.wikiera.http.Outputs.SuccessResponse
 import io.circe.Json
