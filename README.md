@@ -58,3 +58,4 @@ I think it's in state which demonstrates my general approach to code and below c
 * I am using auto codec derivation. It makes compile times longer
 * Some classes should be extracted to separate files as it could grow and make things not easy to read. 
 * I am leaning to use `IO` explicitly instead of `F[_]`. For this project it didn't make much difference, but it's something which should be considered in bigger projects. 
+* Swagger is not a full-blown docs for the API. I wanted to demonstrated Tapir's capabilities to easily generate it based on the definition. Input/output examples should be provided
