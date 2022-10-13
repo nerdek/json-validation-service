@@ -1,4 +1,5 @@
-CREATE TABLE json_schemas (
-                        id text NOT NULL PRIMARY KEY,
-                        info json NOT NULL
+CREATE TABLE JSON_SCHEMAS
+(
+    ID   TEXT NOT NULL PRIMARY KEY,
+    SCHEMA JSON NOT NULL
 );

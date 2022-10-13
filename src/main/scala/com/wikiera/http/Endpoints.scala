@@ -54,6 +54,7 @@ object Endpoints {
 object Inputs {
   case class SchemaId(id: String) extends AnyVal
   case class SchemaInput(id: SchemaId, body: String)
+  case class JsonSchema(id: SchemaId, schema: Json)
 }
 
 object Outputs {

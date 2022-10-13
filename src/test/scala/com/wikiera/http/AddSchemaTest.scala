@@ -26,7 +26,7 @@ class AddSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers with Op
       val addSchemaRoute = AddSchema(server)(nonExistingSchema)(input =>
         IO.pure {
           input.id shouldBe SchemaId("new_id")
-          input.body shouldBe properSchema
+          input.schema shouldBe existingSchema
         }.void
       )
 
@@ -46,7 +46,6 @@ class AddSchemaTest extends AsyncWordSpec with AsyncIOSpec with Matchers with Op
       val addSchemaRoute = AddSchema(server)(nonExistingSchema)(input =>
         IO.pure {
           input.id shouldBe SchemaId(nonExistingId)
-          input.body shouldBe improperSchema
         }.void
       )
 
